@@ -1,0 +1,13 @@
+
+
+{% if recent %}
+    <a href="#"><i class="menu-icon fa fa-users"></i><span class="mm-text">Last {{ recent|length }} Students</span></a>
+					<ul>
+                        {% for r in recent %}
+						<li>
+                            <a tabindex="-1" href="/profile/{{ r.student_id.get_student_username }}/"><i class="menu-icon fa fa-user"></i><span class="mm-text">{{ r }}</span></a>
+						</li>
+						{%  endfor %}
+					</ul>
+
+{% endif %}

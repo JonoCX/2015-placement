@@ -1,0 +1,175 @@
+<div id="switchers-colors-default" class="form-group-margin pull-right" style="margin-top:10px;" >
+    <button class="btn btn-primary btn-rounded btn-sm" id="manual_save" style="margin-top:-15px;">Save Draft</button>&nbsp;&nbsp;
+    <button class="btn btn-danger btn-rounded btn-sm" id="manual_delete" style="margin-top:-15px;">Clear Draft</button>&nbsp;&nbsp;
+    <strong style="vertical-align: top;margin-top:5px;" >Auto Save</strong>&nbsp;&nbsp;
+    <input type="checkbox" data-class="switcher-primary" id="save_controls">&nbsp;&nbsp;
+</div>
+<div id="save_results">
+
+</div>
+
+<div class="modal fade" id="genericModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="genericModal-header2">Message</h4>
+            </div>
+            <div class="modal-body" id='genericModal-body2'>
+                <div style="text-align: center">
+                    <h5>Loading</h5>
+                </div>
+            </div>
+            <div class="modal-footer" id='genericModal-footer2'>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/static/js/jquery.cookie.js"></script>
+<script src="/static/js/sayt.jquery.js"></script>
+
+<script>
+    var output_block = $('#save_results');
+    var form_id = $('.auto_save').attr("id");
+    var cookie_id = 'autosaveFormCookie-' + form_id;
+    var msg_start = '<div class="alert alert-success">';
+    var msg_end = '</div>';
+    var global_data = ''
+    //$('#'+form_id).sayt({'erase': true}); // test without cookies
+    $(document).ready(function(){
+        if($('#'+form_id).sayt({'checksaveexists': true}) == true){
+            output_block.html(msg_start+'Existing Data Recovered'+msg_end);
+            $('#'+form_id).sayt({'recover': true});
+        }else{
+            output_block.html(msg_start+'No Existing Data, Checking our records'+msg_end);
+            // retrieve from DB
+            $('#'+form_id).sayt();
+            get_from_db(cookie_id,form_id);
+        }
+        for (var i in CKEDITOR.instances) {
+            CKEDITOR.instances[i].on('change', function() { CKEDITOR.instances[i].updateElement() });
+        }
+    });
+    time=setInterval(function(){
+        if(auto_save_on()){
+            save_to_db(cookie_id,form_id);
+        }
+    }, 30000);
+
+    $('#manual_save').click(function(event) {
+        event.preventDefault();
+        save_to_db(cookie_id,form_id);
+    });
+    $('#manual_delete').click(function(event) {
+        event.preventDefault();
+        delete_from_db(cookie_id,form_id,true);
+    });
+    $('#'+form_id).submit(function(event){
+        delete_from_db(cookie_id,form_id,false);
+        //$('#'+form_id).submit();
+        return true
+    });
+
+    function formatTimeOfDay(millisSinceEpoch) {
+        var secondsSinceEpoch = (millisSinceEpoch / 1000) | 0;
+        var secondsInDay = ((secondsSinceEpoch % 86400) + 86400) % 86400;
+        var seconds = secondsInDay % 60;
+        var minutes = ((secondsInDay / 60) | 0) % 60;
+        var hours = (secondsInDay / 3600) | 0;
+        return hours + (minutes < 10 ? ":0" : ":") + minutes + (seconds < 10 ? ":0" : ":") + seconds;
+    }
+    function auto_save_on(){
+        if($("#save_controls").is(':checked')){
+            return true
+        }else{
+            return false
+        }
+    }
+
+    function save_to_db(cookie_id,form_id){
+        var form_objs = $.cookie(cookie_id);
+        //$('#'+form_id).sayt({'savenow': true,'exclude': ['[name=csrfmiddlewaretoken]']});
+        $('#'+form_id).sayt({'savenow': true});
+        pass_data = {};
+        pass_data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
+        pass_data['form_id'] = form_id;
+        pass_data['form_data'] = form_objs;
+        pass_data['path'] = '{{ path }}';
+        pass_data['meta'] = '{{ meta }}';
+        $.ajax({
+            url: '{% url 'save_form' username %}',
+            type: 'post',
+            data: pass_data,
+            success: function (data, status) {
+                var the_time = $.now();
+                output_block.html(msg_start+'Saved on ' + formatTimeOfDay(the_time) + ' '+msg_end);
+            }
+        });
+    }
+    function get_from_db(cookie_id,form_id){
+        $.ajax({
+            url: '{% url 'get_form' username %}?form_id='+form_id+'&path={{ path }}',
+            type: 'get',
+            success: function (data, status) {
+                if(data!='False'){
+                    global_data = data;
+                    make_modal('Javascript:load_data()', data);
+                }else{
+                    output_block.html(msg_start+'No data recovered, starting new save'+msg_end);
+                }
+            }
+        });
+    }
+    function delete_from_db(cookie_id,form_id,reset){
+        $('#'+form_id).sayt({'erase': true});
+        $.ajax({
+            url: '{% url 'delete_form' username %}?form_id='+form_id+'&path={{ path }}',
+            type: 'get',
+            success: function (data, status) {
+                if(data!='False'){
+                    $('#'+form_id).trigger("reset");
+                    if(reset){
+                        reset_ckeditor()
+                    }
+                    output_block.html(msg_start+data+msg_end);
+                }else{
+                    output_block.html(msg_start+'No drafts saved'+msg_end);
+                }
+            }
+        });
+    }
+
+    // if we find data, we make a modal and ask the user if they wish to reload it, load_data repopulates the form
+    function make_modal(callback_func, data) {
+        footer_html = '<button type="button" class="btn btn-primary" data-dismiss="modal">No</button>';
+        footer_html = footer_html + '<a class="btn btn-danger" href="' + callback_func + '">Yes</a>';
+        $('#genericModal-header2').html('Confirm');
+        body_html = 'Saved draft found do you wish to load it?'
+        $('#genericModal-body2').html(body_html);
+        $('#genericModal-footer2').html(footer_html);
+        $('#genericModal2').modal();
+    }
+    function load_data(){
+        $.cookie(cookie_id, global_data);
+        $('#'+form_id).sayt({'recover': true});
+        // update the editors too
+        reset_ckeditor()
+        output_block.html(msg_start+'Data recovered from draft save'+msg_end);
+        $('#genericModal2').modal('hide');
+    }
+
+    function reset_ckeditor(){
+        $('textarea[data-type="ckeditortype"]').each(function () {
+            var textarea = $(this);
+            CKEDITOR.instances[textarea.attr('id')].setData(textarea.val());
+        });
+    }
+
+</script>
+
+<script>
+    init.push(function () {
+        $('#switchers-colors-default > input').switcher();
+    });
+</script>

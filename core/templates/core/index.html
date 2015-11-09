@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block header_title %}Home{% endblock %}
+
+<script type="text/css">
+    li a {
+        text-decoration: none;
+        color: black;
+    }
+</script>
+
+{% block content %}
+    {% if user.is_authenticated %}
+        <div class="col-md-4">
+            <div class="panel panel-info panel-dark widget-profile">
+                <div class="panel-heading">
+                    <div class="widget-profile-bg-icon">
+                        <i class="fa fa-file-text-o"></i>
+                    </div>
+                    <div class="widget-profile-header">
+                        <span>Communication</span>
+                    </div>
+                </div>
+                <div class="widget-profile-counters">
+                    <div class="col-xs-3">
+                        <span>Test</span>
+                        <br />
+                        Total
+                    </div>
+                    <div class="col-xs-3">
+                        <span>Test</span>
+                        <br />
+                        Not Admin Checked
+                    </div>
+                    <div class="col-xs-3">
+                        <span>Test</span>
+                        <br />
+                        Unaudited
+                    </div>
+                    <div class="col-xs-3">
+                        <span>Test</span>
+                        <br />
+                        New
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="stat-panel">
+            <div class="stat-cell col-sm-4 padding-sm-hr bordered no-border-r valign-top">
+                <h4 class="padding-sm no-padding-t padding-xs-hr">
+                    <i class="fa fa-file-text-o text-primary"></i>
+                    Forms
+                </h4>
+                <ul class="list-group no-margin">
+                   <li class="list-group-item no-border-hr padding-xs-hr no-bg no-border-radius">
+                       <a href="{% url 'communication' %}">Communication</a>
+                       <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                   </li>
+                    <li class="list-group-item no-border-hr padding-xs-hr no-bg">
+                        <a href="{% url 'commsaudit' %}">Communication Audit</a>
+                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                    </li>
+                    <li class="list-group-item no-border-hr padding-xs-hr no-bg">
+                       <a href="{% url 'push_to_newsletter' %}">Add to Newsletter</a>
+                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                   </li>
+                    {% if user.is_superuser %}
+                        <li class="list-group-item no-border-hr padding-xs-hr no-bg">
+                           <a href="{% url 'userprofile' %}">User Profile</a>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                       </li>
+                    {% endif %}
+                    <li class="list-group-item no-border-hr padding-xs-hr no-bg">
+                       <a href="{% url 'audience' %}">Audience</a>
+                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                   </li>
+                    <li class="list-group-item no-border-hr padding-xs-hr no-bg">
+                       <a href="{% url 'source' %}">Source</a>
+                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                   </li>
+                    <li class="list-group-item no-border-hr padding-xs-hr no-bg">
+                       <a href="{% url 'tags' %}">Tags</a>
+                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                   </li>
+                    <li class="list-group-item no-border-hr no-border-b padding-xs-hr no-bg">
+                        <a href="{% url 'notes' %}">Notes</a>
+                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+
+        <div class="stat-panel">
+            <div class="stat-cell col-sm-4 padding-sm-hr bordered no-border-r valign-top">
+                <h4 class="padding-sm no-padding-t padding-xs-hr">
+                    <i class="fa fa-table text-primary"></i>
+                    Tables
+                </h4>
+                <ul class="list-group no-margin">
+                    <li class="list-group-item no-border-hr padding-xs-hr no-bg no-border-radius">
+                        <a href="{% url 'view_comms' %}">Communication</a>
+                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                    </li>
+                    <li class="list-group-item no-border-hr padding-xs-hr no-bg">
+                        <a href="{% url 'view_comms_audit' %}">Communication Audit</a>
+                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                    </li>
+                    <li class="list-group-item no-border-hr padding-xs-hr no-bg">
+                        <a href="{% url 'view_newsletter_table' %}">Newsletter</a>
+                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                    </li>
+                    {% if user.is_superuser %}
+                        <li class="list-group-item no-border-hr padding-xs-hr no-bg">
+                            <a href="{% url 'view_user_profile' %}">User Profile</a>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                        </li>
+                    {% endif %}
+                    <li class="list-group-item no-border-hr padding-xs-hr no-bg">
+                        <a href="{% url 'view_audience' %}">Audience</a>
+                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                    </li>
+                    <li class="list-group-item no-border-hr padding-xs-hr no-bg">
+                        <a href="{% url 'view_sources' %}">Source</a>
+                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                    </li>
+                    <li class="list-group-item no-border-hr padding-xs-hr no-bg">
+                        <a href="{% url 'view_tags' %}">Tags</a>
+                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                    </li>
+                    <li class="list-group-item no-border-hr no-border-b padding-xs-hr no-bg">
+                        <a href="{% url 'view_notes' %}">Notes</a>
+                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

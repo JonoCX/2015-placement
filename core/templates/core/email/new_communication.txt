@@ -1,0 +1,11 @@
+New Communication
+
+A new communication has been added to the stie, it requires an
+admin to approve it.
+
+Added by: {{ created_by }}
+Added on: {{ created_on }}
+
+To approve this communication, please click the following link
+
+http://{{ domain }}

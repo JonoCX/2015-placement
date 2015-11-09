@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block content %}
+
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="panel-title">Delete Selected Article</span>
+        </div>
+        <div class="panel-body">
+            <table class="table table-bordered table-striped" style="clear:both;">
+                <tbody>
+                    <tr>
+                        <td width="25%"><strong>Short Description</strong></td>
+                        <td width="75%">{{ article.short_desc }}</td>
+                    </tr>
+                    <tr>
+                        <td width="25%"><strong>Longer Description</strong></td>
+                        <td width="75%">{{ article.full_desc }}</td>
+                    </tr>
+                    <tr>
+                        <td width="25%"><strong>Project Start Date</strong></td>
+                        <td width="75%">{{ article.project_start_date }}</td>
+                    </tr>
+                    <tr>
+                        <td width="25%"><strong>Duration (Number of Weeks)</strong></td>
+                        <td width="75%">{{ article.duration }}</td>
+                    </tr>
+                    <tr>
+                        <td width="25%"><strong>BH Number</strong></td>
+                        <td width="75%">{{ article.bh_number }}</td>
+                    </tr>
+                    <tr>
+                        <td width="25%"><strong>Level</strong></td>
+                        <td width="75%">{{ article.level }}</td>
+                    </tr>
+                    <tr>
+                        <td width="25%"><strong>Value of Award (£)</strong></td>
+                        <td width="75%">{{ article.value_of_award|intcomma }}</td>
+                    </tr>
+                    <tr>
+                        <td width="25%"><strong>Value Awarded to Newcastle (£)</strong></td>
+                        <td width="75%">{{ article.value_awarded_to_ncl|intcomma }}</td>
+                    </tr>
+                    <tr>
+                        <td width="25%"><strong>External</strong></td>
+                        <td width="75%">{{ article.external }}</td>
+                    </tr>
+                    <tr>
+                        <td width="25%"><strong>Source</strong></td>
+                        <td width="75%">{{ article.source }}</td>
+                    </tr>
+                    <tr>
+                        <td width="25%"><strong>Individuals</strong></td>
+                        <td width="75%">
+                            {% for i in article.individuals.all %}
+                                {{ i.name }}
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="25%"><strong>Tags</strong></td>
+                        <td width="75%">
+                            {% for t in article.tags.all %}
+                                {{ t.name }}
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="25%"><strong>Notes</strong></td>
+                        <td width="75%">
+                            {% for n in article.notes.all %}
+                                {{ n.title }}
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="25%"><strong>Admin Checked</strong></td>
+                        <td width="75%">
+                            {{ article.admin_checked }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger btn-labeled">
+            <span class="btn-label icon fa fa-trash-o"></span>
+            Delete
+        </button>
+    </form>
+
+{% endblock content %}

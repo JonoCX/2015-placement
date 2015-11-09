@@ -1,0 +1,52 @@
+{% include 'fragments/search.html' %}
+<div id="main-menu" role="navigation">
+    <div id="main-menu-inner">
+        <ul class="navigation">
+            <li>
+                <a href="{% url "index" %}"><i class="menu-icon fa fa-home"></i><span class="mm-text">Home</span></a>
+            </li>
+            <li class="mm-dropdown mm-dropdown-root open">
+                <a href="{% url 'communication' %}"><i class="menu-icon fa fa-file-text-o"></i><span class="mm-text">Communication</span></a>
+                <ul class="mmc-dropdown-delay animated fadeInLeft">
+                    <li><a tabindex="-1" href="{% url 'communication' %}"><i class="menu-icon fa fa-files-o"></i><span class="mm-text">Add new...</span></a></li>
+                    <li><a tabindex="-1" href="{% url 'audience' %}"><i class="menu-icon fa fa-users"></i><span class="mm-text">Audience</span></a> </li>
+                    <li><a tabindex="-1" href="{% url 'source' %}"><i class="menu-icon fa fa-info-circle"></i><span class="mm-text">Source</span></a></li>
+                    <li><a tabindex="-1" href="{% url 'notes' %}"><i class="menu-icon fa fa-comment"></i><span class="mm-text">Notes</span></a></li>
+                    <li><a tabindex="-1" href="{% url 'tags' %}"><i class="menu-icon fa fa-tags"></i><span class="mm-text">Tags</span></a></li>
+                </ul>
+            </li>
+{#            <li class="mm-dropdown mm-dropdown-root open">#}
+{#                <a href="{% url 'commsaudit' %}"><i class="menu-icon fa fa-files-o"></i><span class="mm-text">Audit</span></a>#}
+{#                <ul class="mmc-dropdown-delay animated fadeInLeft">#}
+{#                    <li><a tabindex="-1" href="{% url 'commsaudit' %}"><i class="menu-icon fa fa-files-o"></i><span class="mm-text">Communication Audit</span></a></li>#}
+{#                    <li><a tabindex="-1" href="{% url 'push_to_newsletter' %}"><i class="menu-icon fa fa-file"></i><span class="mm-text">Add to Newsletter</span></a></li>#}
+{#                    <li><a tabindex="-1" href="{% url 'view_audit_trail' %}"><i class="menu-icon fa fa-ellipsis-h"></i><span class="mm-text">Audit Trail</span></a></li>#}
+{#                </ul>#}
+{#            </li>#}
+            <li>
+                <a href="{% url "userprofile" %}"><i class="menu-icon fa fa-user"></i><span class="mm-text">User Profile</span></a>
+            </li>
+            <li class="mm-dropdown mm-dropdown-root open">
+                <a href="{% url 'index' %}"><i class="menu-icon fa fa-table"></i><span class="mm-text mmc-dropdown-delay animated fadeIn">Stored Data</span></a>
+                <ul class="mmc-dropdown-delay animated fadeInLeft">
+                    <li><a tabindex="-1" href="{% url 'view_comms' %}"><span class="mm-text">Communication</span></a></li>
+                    {% if user.is_superuser %}<li><a tabindex="-1" href="{% url 'view_user_profile' %}"><span class="mm-text">User Profile</span></a></li>{% endif %}
+                    <li><a tabindex="-1" href="{% url 'view_audience' %}"><span class="mm-text">Audience</span></a></li>
+                    <li><a tabindex="-1" href="{% url 'view_sources' %}"><span class="mm-text">Sources</span></a></li>
+                    <li><a tabindex="-1" href="{% url 'view_notes' %}"><span class="mm-text">Notes</span></a></li>
+                    <li><a tabindex="-1" href="{% url 'view_tags' %}"><span class="mm-text">Tags</span></a></li>
+                    <li><a tabindex="-1" href="{% url 'view_comms_audit' %}"><span class="mm-text">Comms Audit</span></a></li>
+                    <li><a tabindex="-1" href="{% url 'view_newsletter_table' %}"><span class="mm-text">Newsletter</span></a></li>
+                </ul>
+            </li>
+        </ul> <!-- / .navigation -->
+        <div class="menu-content">
+{#            <a href="{% url 'newsletter' %}" class="btn btn-warning btn-block btn-outline dark">View Report</a>#}
+{#            {% if user.is_superuser %}<a href="#" class="btn btn-warning btn-block btn-outline dark">Send Report</a>{% endif %}#}
+            {# TODO Implement some sort of basic help page, with terms and definitions #}
+            <a href="#help" class="btn btn-warning btn-block btn-outline dark">Help</a>
+        </div>
+    </div> <!-- / #main-menu-inner -->
+</div> <!-- / #main-menu -->
+<!-- /4. $MAIN_MENU -->
+

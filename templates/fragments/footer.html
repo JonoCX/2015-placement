@@ -1,0 +1,28 @@
+<footer class="footer">
+    <div class="pull-right footer_logo">
+        <img src="{{ STATIC_URL }}img/uni_logo.png" alt="University Logo"/>
+    </div>
+    <p class="text-muted footer_text pull-right">
+        Newcastle University © Copyright {% now "Y" %}
+        {% if DEBUG %}
+            <br/>
+            <span style="color:red;">
+                &nbsp;<strong>DB:</strong> {{ DATABASE_NAME }} <strong>System:</strong> {{ SYSTEM_KEY }}
+                &nbsp;<strong>Roles:</strong>&nbsp;
+                {% for r in request.session.roles %}
+                    <span class="label label-info">{{ r }}</span>
+                {% endfor %}
+                &nbsp;<strong>SYSTEM KEY ID:</strong> {{ request.session.sysKey }}
+            </span>
+{#            &nbsp;<strong>Role Details:</strong>&nbsp;#}
+{#            {% if 'roles_dict' in request.session %}#}
+{#                {% for r in request.session.roles_dict %}#}
+{#                    <span class="label label-danger">#}
+{#                    {{ r.roles.role_key }} - {{ r.for_key|default:'All Systems' }}, {{ r.for_base_unit|default:'All Base Units' }}, {{ r.for_programme|default:'All Programmes' }}#}
+{#                    </span>#}
+{#                    {{ request.session.MBBS }} {{ request.session.DENT }} {{ request.session.MULTI }}#}
+{#                {% endfor %}#}
+{#            {% endif %}#}
+        {% endif %}
+    </p>
+</footer>

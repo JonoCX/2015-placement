@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <!-- Main Article form -->
+    {% crispy c_form %}
+    <div id="form-errors">{{ form_errors }}</div>
+    <!-- / Main Article form -->
+
+    <!-- Tags Modal -->
+    <div id="modal-tags" class="modal fade" tabindex="-1" role="dialog" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times-circle"></i></button>
+                    <h4 class="modal-title" id="tag-model-label">Add a new tag</h4>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="" id="tag-form">
+                        {% csrf_token %}
+                        {{ t_form|crispy }}
+                        <input type="submit" value="Submit" name="tagmodal" id="tagmodal" />
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- / Tags Modal -->
+    <!-- Notes Modal -->
+    <div id="modal-notes" class="modal fade" tabindex="-1" role="dialog" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hideen="true"><i class="fa fa-times-circle"></i></button>
+                    <h4 class="modal-title" id="tag-model-label">Add a new note</h4>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="" id="notes-form">
+                        {% csrf_token %}
+                        {{ n_form|crispy }}
+                        <input type="submit" value="Submit" name="notesmodal" id="notesmodal" />
+                        <input type="hidden" name="tagmodal" />
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- / Notes Modal -->
+
+    <script>
+        $(document).ready(function () {
+            var full_desc = $("#div_id_full_desc");
+            var value = $("#div_id_value_of_award");
+            var tag = $("#div_id_tags");
+            var note = $("#div_id_notes");
+
+            tag.append("<a data-toggle='modal' data-target='#modal-tags'>Add&nbsp;&nbsp;<i class='fa fa-plus'></i></a>");
+            tag.append('<br/><a data-toggle="modal" data-target="#modal-notes">Add a note&nbsp;&nbsp;<i class="fa fa-plus"></i></a>');
+
+            full_desc.append('<div id="character-limit-textarea-label" class="limiter-label">Characters left: <span class="limiter-count">3000</span></div>');
+            $("#id_full_desc").limiter(3000, {label:'#character-limit-textarea-label'});
+
+            $("#div_id_short_desc").append('<div id="character-limit-input-label" class="limiter-label form-group-margin">Characters left: <span class="limiter-count">140</span></div>');
+            $("#id_short_desc").limiter(140, {label:'#character-limit-input-label'});
+
+            full_desc.append('<div class="expanding-input-hidden expanding-input-content"><a data-toggle="modal" data-target="#modal-notes">Add a Note <i class="fa fa-plus"></i></a></div>');
+            full_desc.expandingInput({target: 'input[type="text"]', hidden_content: '> div'});
+
+            value.append('<a data-toggle="modal" data-target="#modal-notes">Add a note&nbsp;&nbsp;<i class="fa fa-plus"></i></a>');
+
+            $('#key-btn').on('click', function () { $('a[href="#values"]').tab('show')});
+            $('#value-btn').on('click', function () { $('a[href="#involved"]').tab('show')});
+            $('#involved-btn').on('click', function () { $('a[href="#additional"]').tab('show')});
+
+            $('#jq-growl-notice').click(function () {
+                $.growl.notice({message: "Communication added"});
+            });
+
+            $('#tag-form').on('submit', function(e) {
+                var data = $('#tag-form').serialize();
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'communication' %}",
+                    data: data,
+                    success: function() {
+                        $('#modal-tags').modal('hide');
+                        $.growl.notice({
+                            message: "Tag Saved: This tag will be added to the new Article"
+                        })
+                    }
+                });
+                e.preventDefault();
+            });
+
+            $('#notes-form').on('submit', function(e) {
+                var data = $('#notes-form').serialize();
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'communication' %}",
+                    data: data,
+                    success: function () {
+                        $('#modal-notes').modal('hide');
+                        $.growl.notice({
+                            message: "Note Saved: This note will be added to the new Article"
+                        })
+                    }
+                });
+                e.preventDefault();
+            });
+
+            $('#id_tags').select2({
+                placeholder: "Select tag",
+                allowClear: true
+            });
+
+            $('#id_individuals').select2({
+                placeholder: "Select involved",
+                allowClear: true
+            });
+
+        })
+    </script>
+{% endblock %}

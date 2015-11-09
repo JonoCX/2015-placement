@@ -1,0 +1,197 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load humanize %}
+
+{% block content %}
+<script type="text/javascript" charset="utf-8" src="{{ STATIC_URL }}js/jquery.dataTables.js"></script>
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="panel-title">Article Approval</span>
+        </div>
+        <div class="panel-body">
+            <div class="dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" id="article-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    Select another Article
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="article-dropdown">
+                    {% for i in queryset %}
+                        <li><a href="{% url 'article_approval' i.pk %}">{{ i }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <br />
+            <table id="data-table" class="table table-bordered table-striped" style="clear: both">
+                <tbody>
+                    <tr>
+                        <td width="25%"><strong>Short Description</strong></td>
+                        <td width="75%">
+                            <a href="#" id="shortdesc">
+                                {{ article.short_desc }}
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="25%"><strong>Longer Description</strong></td>
+                        <td width="75%">
+                            <a href="#" id="fulldesc">
+                                {{ article.full_desc }}
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="25%"><strong>Project Start Date</strong></td>
+                        <td width="75%">
+                            <a href="#" data-pk="{{ article.pk }}" data-url="{% url 'update_comm' %}" data-name="project_start_date" data-viewformat="DD/MM/YYYY" data-mode="inline" data-placement="right" data-value="{{ article.project_start_date }}" data-type="combodate" class="editable editable-click">
+                                {{ article.project_start_date }}
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="25%"><strong>Duration (Number of Weeks)</strong></td>
+                        <td width="75%">
+                            <a href="#" data-pk="{{ article.pk }}" data-url="{% url 'update_comm' %}" data-name="duration" data-mode="inline" data-value="{{ article.duration }}" data-type="number" class="editable editable-click">
+                                {{ article.duration }}
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="25%"><strong>BH Number</strong></td>
+                        <td>
+                            <a href="#" data-pk="{{ obj.pk }}" data-url="{% url 'update_comm' %}" data-name="bh_number" data-mode="inline" data-placement="top" data-value="{{ article.bh_number }}" data-type="text" class="editable editable-click">
+                                {{ article.bh_number }}
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="25%"><strong>Level</strong></td>
+                        <td>
+                            <a href="#" id="level">
+                                {{ article.level }}
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="25%"><strong>Value of Award (£)</strong></td>
+                        <td width="75%">
+                            <a href="#" data-pk="{{ article.pk }}" data-url="{% url 'update_comm' %}" data-name="value_of_award" data-mode="inline" data-value="{{ article.value_of_award }}" data-type="number" class="editable editable-click">
+                                {{ article.value_of_award|intcomma }}
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="25%"><strong>Value Awarded to Newcastle (£)</strong></td>
+                        <td width="75%">
+                            <a href="#" data-pk="{{ article.pk }}" data-url="{% url 'update_comm' %}" data-name="value_awarded_to_ncl" data-mode="inline" data-value="{{ article.value_awarded_to_ncl }}" data-type="number" class="editable editable-click">
+                                {{ article.value_awarded_to_ncl|intcomma }}
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="25%"><strong>External</strong></td>
+                        <td width="75%">
+                            <a href="#" data-pk="{{ article.pk }}" data-url="{% url 'update_comm' %}" data-name="external" data-mode="inline" data-value="{{ article.external }}" data-type="text" class="editable editable-click">
+                                {{ article.external }}
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="25%"><strong>Admin Checked</strong></td>
+                        <td width="75%">
+                            {{ article.admin_checked }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="25%"><strong>Tags</strong></td>
+                        <td width="75%">
+                            {% for t in article.communication_tags_set.all %}
+                                {{ t.name }}
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="25%"><strong>Notes</strong></td>
+                        <td width="75%">
+                            {% for n in article.communication_notes_set.all %}
+                                {{ n.title }}
+                            {% endfor %}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <br />
+
+            <div class="panel-group panel-group-danger" id="accordion">
+                <div class="panel">
+                    <div class="panel-heading">
+                        <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapse-form">
+                            Admin Tools
+                        </a>
+                    </div>
+                    <div id="collapse-form" class="panel-collapse collapse" style="height: auto;">
+                        <div class="panel-body">
+                            {% crispy form %}
+                            <br />
+                            <div class="alert" style="">
+                                <button type="button" class="close" data-dismiss="alert">x</button>
+                                <strong>Warning!</strong>
+                                Submitting this form will also change the Article to say it has been checked by
+                                an admin user.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        <script>
+            $(document).ready(function() {
+                $.fn.editable.defaults.mode = 'inline';
+                $('.editable').editable({
+                    success: function(response, newValue) {
+                        if (response.status == 'error') return response.msg
+                    }
+                });
+                $('#shortdesc').editable({
+                    type: 'text',
+                    pk: {{ article.pk }},
+                    url: '{% url 'update_comm' %}',
+                    name: 'short_desc',
+                    success: function(response, newValue) {
+                        if (response.status == 'error') return response.msg
+                    }
+                });
+                $('#fulldesc').editable({
+                    type: 'textarea',
+                    pk: {{ article.pk }},
+                    url: '{% url 'update_comm' %}',
+                    name: 'full_desc',
+                    rows: 10,
+                    success: function(response, newValue) {
+                        if (response.status == 'error') return response.msg
+                    }
+                });
+
+                var lvl = [
+                    {value: 'N/A', text: 'N/A'},
+                    {value: 'UG', text: 'UG'},
+                    {value: 'PGT', text: 'PGT'},
+                    {value: 'PGR', text: 'PGR'},
+                    {value: 'ST', text: 'ST'}
+                ];
+                $('#level').editable({
+                    type: 'select',
+                    mode: 'top',
+                    pk: {{ article.pk }},
+                    url: '{% url 'update_comm' %}',
+                    name: 'level',
+                    source: lvl,
+                    success: function(response, newValue) {
+                        if (response.status == 'error') return response.msg
+                    }
+                });
+            });
+        </script>
+    </div>
+    </div>
+
+{% endblock content %}

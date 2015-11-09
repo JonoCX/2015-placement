@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+    {% crispy form %}
+
+    {% if error_stored %}
+        <br />
+        <div class="alert alert-danger">
+            <button type="button" class="close" data-dismiss="alert">x</button>
+            <strong>Already in Newsletter!</strong>
+            The communication has already been added to the newsletter
+        </div>
+    {% endif %}
+
+{% endblock content %}

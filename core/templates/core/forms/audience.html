@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    {% crispy form %}
+
+    <script>
+        init.push(function () {
+            $("#div_id_description").append('<div id="character-limit-textarea-label" class="limiter-label">Characters left: <span class="limiter-count">255</span></div>');
+            $("#id_description").limiter(255, {label:'#character-limit-textarea-label'});
+        })
+    </script>
+{% endblock %}

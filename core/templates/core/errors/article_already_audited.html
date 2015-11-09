@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <div class="col-md-8">
+        <div class="alert alert-danger">
+            <button type="button" class="close" data-dismiss="alert">x</button>
+            <strong>
+                Article already processed!
+            </strong>
+            You are trying to access an Article that has already been processed
+            by a member of staff. Select another from the list below.
+        </div>
+
+        <div class="panel-body">
+            <div class="dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" id="article-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    Select another Article
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="article-dropdown">
+                    {% for i in queryset %}
+                        <li>
+                            <a href="{% url 'article_approval' i.pk %}">
+                                {{ i }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}

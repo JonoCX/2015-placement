@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+    {% if queryset %}
+        <div class="table-primary">
+            <div role="grid" class="dataTables_wrapper form-inline no-footer" id="jq-datatables-wrapper">
+                <table id="jq-datatables" cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered dataTable no-footer">
+                    <thead>
+                        <th>Name</th>
+                        <th>Description</th>
+                    </thead>
+                    <tbody>
+                        {% for obj in queryset %}
+                        <tr>
+                            <td>{{ obj.name }}</td>
+                            <td>{{ obj.description }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% else %}
+        <h2>No Data.</h2>
+    {% endif %}
+
+    <script>
+        init.push(function() {
+            $('#jq-datatables').dataTable();
+            $('#jq-datatables-wrapper .table-caption').text('Sources');
+            $('#jq-datatables_wrapper .dataTables_filter input').attr('placeholder', 'Search...');
+            $('#jq-datatables_filter').on('keyup', function () {
+                $('#jq-datatables').search(this.value).draw();
+            });
+        })
+    </script>
+{% endblock %}

@@ -1,0 +1,19 @@
+
+{#    <a style="text-decoration: none; color:grey; padding-top: 10px"  href="{% url 'logout' %}"><i class="fa fa-power-off"></i>&nbsp;&nbsp;Log Out</a>#}
+<li class="dropdown">
+    <a href="#" class="dropdown-toggle user-menu" data-toggle="dropdown">
+        {% if user.is_authenticated %}{{ profile.username }}{% else %}MENU{% endif %}
+    </a>
+    <ul class="dropdown-menu">
+        {% if user.is_authenticated %}
+            <li><a href="{% url 'view_user_profile' %}"><i class="dropdown-icon fa fa-user"></i>&nbsp;&nbsp;Profile</a></li>
+{#        <li><a href="{% url 'user_profile' request.user.userprofile.username %}"><i class="dropdown-icon fa fa-user"></i>&nbsp;&nbsp;Profile and Settings</a></li>#}
+            <li class="divider"></li>
+            <li class="divider"></li>
+            <li><a href="{% url 'logout' %}"><i class="dropdown-icon fa fa-power-off"></i>&nbsp;&nbsp;Log Out</a></li>
+        {% else %}
+            <li><a href="{% url 'index' %}"><i class="dropdown-icon fa fa-sign-in">&nbsp;&nbsp;Log In</i></a></li>
+        {% endif %}
+    </ul>
+</li>
+

@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    {% if queryset %}
+        <div class="table-primary">
+            <div role="grid" id="jq-datatables_wrapper" class="dataTable-wrapper form-inline no-footer">
+                <table id="jq-datatables" cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered dataTable no-footer">
+                    <thead>
+                        <td>Article</td>
+                        <td>Who Audited</td>
+                        <td>Type of Audit</td>
+                        <td>Date & Time</td>
+                    </thead>
+                    <tbody>
+                        {% for i in queryset %}
+                        <tr>
+                            <td>{{ i.sent_id }}</td>
+                            <td>{{ i.history_user_id }}</td>
+                            {% if i.history_type == "+" %}<td>Add</td>{% else %}<td>Delete</td>{% endif %}
+                            <td>{{ i.history_date }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% endif %}
+
+{% endblock content %}

@@ -1,0 +1,33 @@
+{% for a in all_objects %}
+    {% if forloop.first %}
+    <table class="table table-condensed table-striped table-bordered" {% if tableid %}id={{ tableid }}{% endif %}>
+        <thead>
+            <tr>
+                {% for key,value in a.get_field_values %}
+                    {% if key == 'ID' %}
+                        <th class="col-md-3"><a href="{% url url_name 0 %}" class="btn btn-success btn-sm">new</a></th>
+                    {% else %}
+                        <th>{{ key|title }}</th>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+    {% endif %}
+        <tr>
+            {% for key,value in a.get_field_values %}
+                {% if key == 'ID' %}
+                    <td>
+                        <a href="{% url url_name value %}" class="btn btn-primary btn-sm">edit</a>
+                        {% if remove_url %}<a href="{% url remove_url value %}" class="btn btn-danger btn-sm">remove</a>{% endif %}
+                    </td>
+                {% else %}
+                    <td>{{ value }}</td>
+                {% endif %}
+            {% endfor %}
+        </tr>
+    {% if forloop.last %}
+        </tbody>
+    </table>
+    {% endif %}
+{% endfor %}

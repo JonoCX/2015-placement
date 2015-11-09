@@ -1,0 +1,304 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+    {% if queryset %}
+        <div class="table-primary">
+            <div role="grid" class="dataTables_wrapper form-inline no-footer" id="jq-datatables-wrapper">
+            <form method="POST">{% csrf_token %}
+                <table id="jq-datatables" cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered dataTable no-footer">
+                    <thead>
+                        <th><input name="select_all" value="1" type="checkbox" onclick="toggle(this)"></th>
+                        <th>Short Description</th>
+                        <th>Full Description</th>
+                        <th>BH Number</th>
+                        <th>Value of Award</th>
+                        <th>Value Awarded to Newcastle</th>
+                        <th>Project Start Date</th>
+                        <th>Duration (Weeks)</th>
+                        <th>Individuals</th>
+                        <th>External</th>
+                        <th>Created By</th>
+                        <th>Created On</th>
+                        <th>Source</th>
+                        <th>Admin Checked</th>
+                        <th>Level</th>
+                        <th></th>
+{#                        <th>Tags</th>#}
+{#                        <th>Notes</th>#}
+                    </thead>
+                    <tbody>
+                        {% for obj in queryset %}
+                            <tr class="gradeA odd">
+                                <td><input name="select" value="{{ obj.pk }}" type="checkbox"></td>
+                                <td>
+                                    <a href="#" data-pk="{{ obj.pk }}" data-url="{% url 'update_comm' %}" data-name="short_desc" data-mode="inline" data-placement="top" data-value="{{ obj.short_desc }}" data-type="text" class="editable">
+                                        {{ obj.short_desc }}
+                                    </a>
+                                </td>
+                                <td style="width: 20%">
+                                    <a href="#" data-pk="{{ obj.pk }}" data-url="{% url 'update_comm' %}" data-name="full_desc" data-mode="inline" data-placement="top" data-value="{{ obj.full_desc }}" class="editable">
+                                        {{ obj.full_desc|truncatechars:250 }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="#" data-pk="{{ obj.pk }}" data-url="{% url 'update_comm' %}" data-name="bh_number" data-mode="inline" data-placement="top" data-value="{{ obj.bh_number }}" data-type="text" class="editable">
+                                        {{ obj.bh_number }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="#" data-pk="{{ obj.pk }}" data-url="{% url 'update_comm' %}" data-name="value_of_award" data-mode="inline" data-placement="top" data-value="{{ obj.value_of_award }}" data-type="number" class="editable">
+                                        {{ obj.value_of_award }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="#" data-pk="{{ obj.pk }}" data-url="{% url 'update_comm' %}" data-name="value_awarded_to_ncl" data-mode="inline" data-placement="top" data-value="{{ obj.value_awarded_to_ncl }}" data-type="number" class="editable">
+                                        {{ obj.value_awarded_to_ncl }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="#" id="bs-x-editable-dob" data-pk="{{ obj.pk }}" data-url="{% url 'update_comm' %}" data-name="project_start_date" data-viewformat="DD/MM/YYYY" data-mode="inline" data-placement="right" data-value="{{ obj.project_start_date }}" data-type="combodate" data-title="Select a new date" class="editable">
+                                        {{ obj.project_start_date }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="#" data-pk="{{ obj.pk }}" data-url="{% url 'update_comm' %}" data-name="duration" data-mode="inline" data-placement="top" data-value="{{ obj.duration }}" data-type="number" class="editable">
+                                        {{ obj.duration }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <ul>
+                                        {% for ind in obj.individuals.all %}
+                                            <li>{{ ind.username }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </td>
+                                <td>
+                                    <a href="#" data-pk="{{ obj.pk }}" data-url="{% url 'update_comm' %}" data-name="external" data-mode="inline" data-placement="top" data-value="{{ obj.external }}" data-type="text" class="editable">
+                                        {{ obj.external }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="#" data-pk="{{ obj.pk }}" data-url="{% url 'update_comm' %}" data-name="created_by" data-placement="top" data-value="{{ obj.created_by }}" data-type="select" class="editable">
+                                        {{ obj.created_by }}
+                                    </a>
+                                </td>
+                                <td>{{ obj.created_on }}</td>
+                                <td>
+                                    <a href="#" data-url="{% url 'update_comm' %}" data-name="source" data-type="select" data-pk="{{ obj.pk }}" data-value="{{ obj.source }}" data-title="Source" class="source">
+                                        {{ obj.source }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="#" data-url="{% url 'update_comm' %}" data-name="admin_checked" data-type="select" data-pk="{{ obj.pk }}" data-value="{{ obj.admin_checked }}" data-title="Admin Checked" class="admin-checked">
+                                        {{ obj.admin_checked }}
+                                    </a>
+                                </td>
+                                <td>
+                                    {{ obj.level }}
+                                </td>
+                                <td>
+                                    <a class="btn btn-xs btn-labeled btn-success" href="{% url 'edit_article' article_id=obj.pk %}">
+                                        <span class="btn-label icon fa fa-pencil-square-o"></span>
+                                        Edit
+                                    </a><br>
+                                    <a class="btn btn-xs btn-labeled btn-danger" href="{% url 'delete_article' article_id=obj.pk %}">
+                                        <span class="btn-label icon fa fa-trash-o"></span>
+                                        Delete
+                                    </a>
+                                </td>
+{#                                <td style="display:none">#}
+{#                                    {% for t in obj.tags.all %}#}
+{#                                        {{ t.name }}#}
+{#                                    {% endfor %}#}
+{#                                </td>#}
+{#                                <td>#}
+{#                                    <select class="js-multiple" multiple="multiple" data-url="#" id="{{ obj.pk }}_sel_tags">#}
+{#                                        {% for t in tags.all %}#}
+{#                                            <option>{{ t.name }}</option>#}
+{#                                        {% endfor %}#}
+{#                                    </select>#}
+{#                                    <a data-toggle="modal" data-target="#modal-tags"><i class="fa fa-plus"></i></a>#}
+{#                                </td>#}
+{#                                <td>#}
+{#                                    <select class="js-multiple" multiple="multiple"data-url="{% url 'update_comm' %}" id="{{ obj.pk }}_sel_notes">#}
+{#                                        {% for n in notes.all %}#}
+{#                                            <option>{{ n.title }}</option>#}
+{#                                        {% endfor %}#}
+{#                                    </select>#}
+{#                                    <a data-toggle="modal" data-target="#modal-notes"><i class="fa fa-plus"></i></a>#}
+{#                                </td>#}
+                            </tr>
+{#                            <script>#}
+{#                                var temp_tags="{% for t in obj.tags.all %}{{ t.name }}{% if not forloop.last %}, {% endif %}{% endfor %}";#}
+{#                                $("#{{ obj.pk }}_sel_tags").val(temp_tags);#}
+{#                                var temp_notes="{% for n in obj.notes.all %}{{ n.title }}{% if not forloop.last %}, {% endif %}{% endfor %}";#}
+{#                                $("#{{ obj.pk }}_sel_notes").val(temp_notes);#}
+{#                            </script>#}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <button class="btn btn-primary" type="submit" id="download_select">Download (.csv)</button>
+        </form>
+    {% else %}
+    <h2>No data</h2>
+    {% endif %}
+    {# TODO Flag highlighting #}
+    <!-- Tags Model -->
+    <div id="modal-tags" class="modal fade" tabindex="-1" role="dialog" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times-circle"></i></button>
+                    <h4 class="modal-title" id="tag-model-label">Add a new tag</h4>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="">
+                        {% csrf_token %}
+                        {{ tag_form|crispy }}
+                        <input type="submit" value="Submit" />
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- / Tags Model -->
+
+    <!-- Notes Model -->
+    <div id="modal-notes" class="modal fade" tabindex="-1" role="dialog" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hideen="true"><i class="fa fa-times-circle"></i></button>
+                    <h4 class="modal-title" id="tag-model-label">Add a new note</h4>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="">
+                        {% csrf_token %}
+                        {{ notes_form|crispy }}
+                        <input type="submit" value="Submit" />
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- / Notes Model -->
+
+    <script>
+        /* Datatable filters */
+        var selLevel = '&nbsp;\n<br/><select name="filter_level" id="filter_level_id" class="form-control" style="width:auto;">\n';
+        selLevel += '<option value="">-- Select Level --</option>';
+        selLevel += '<option value="N/A">N/A</option>';
+        selLevel += '<option value="UG">UG</option>';
+        selLevel += '<option value="PGT">PGT</option>';
+        selLevel += '<option value="PGR">PGR</option>';
+        selLevel += '<option value="ST">ST</option>';
+        selLevel += '</select>';
+
+        var selAdmin = '&nbsp;<select name="filter_admin" id="filter_admin_id" class="form-control" style="width:auto;">';
+        selAdmin += '<option value="">-- Select Admin Checked --</option>';
+        selAdmin += '<option value="True">True</option>';
+        selAdmin += '<option value="False">False</option>';
+        selAdmin += '</select>';
+
+        var selSource = '&nbsp;<select name="filter_source" id="filter_source_id" class="form-control" style="width:auto;">';
+        selSource += '<option value="">-- Select Source --</option>';
+        selSource += '{% for i in source %}<option value="{{ i.name }}">{{ i.name }}</option>{% endfor %}';
+        selSource += '</select>';
+
+{#        TODO this needs finishing, related to .1#}
+{#        var selTags = '&nbsp;<select name="filter_tags" id="filter_tags_id" class="form-control" style="width:auto;">';#}
+{#        selTags += '<option value="">-- Select Source --</option>';#}
+{#        selTags += '{% for i in tags %}<option value="{{ i.name }}">{{ i.name }}</option>{% endfor %}';#}
+{#        selTags += '</select>';#}
+
+        function toggle(source) {
+            checkboxes = document.getElementsByName('select');
+            for (var i = 0, n = checkboxes.length; i < n; i++) {
+                checkboxes[i].checked = source.checked;
+            }
+        }
+
+        $(document).ready(function() {
+            var table = $('#jq-datatables').DataTable();
+            $('#jq-datatables_wrapper .table-caption').text('Communication');
+            $('#jq-datatables_wrapper .dataTables_filter input').attr('placeholder', 'Search...');
+            $('#jq-datatables_filter').on('keyup', function () {
+                //$('#jq-datatables').search(this.value).draw();
+                table.search(this.value).draw();
+            });
+            $('.editable').editable({
+                success: function(response, newValue) {
+                    if (response.status == 'error') return response.msg
+                }
+            });
+            $(".js-multiple").select2();
+            $(".admin-checked").editable({
+                source: [
+                    {value: 1, text: 'True'},
+                    {value: 0, text: 'False'},
+                ],
+                success: function(response, newValue) {
+                    console.log(response);
+                    if (response.status == 'error') return response.msg
+                }
+            });
+{#            $(".source").editable({#}
+{#                source: source,#}
+{#                success: function(response, newValue) {#}
+{#                    console.log(response);#}
+{#                    if (response.status == 'error') return response.msg#}
+{#                }#}
+{#            });#}
+
+            /* Datatable filters */
+            $('.DT-lf-right').append('<div id="table_filters"></div>');
+            $('#table_filters').append('<div class="form-inline">' + selLevel + selAdmin + selSource +'</div>');
+            $('#filter_level_id').change(function() {
+                table.columns(14).search(this.value).draw();
+            });
+            $('#filter_admin_id').change(function() {
+                table.columns(13).search(this.value).draw();
+            });
+            $('#filter_source_id').change(function() {
+                table.columns(12).search(this.value).draw();
+            });
+            {# TODO This needs finishing #}
+{#            $('#filter_tags_id').change(function() {#}
+{#                table.columns(17).search(this.value).draw();#}
+{#            });#}
+
+            /* Get selected articles to post */
+            // Highlight selected row
+            $('#jq-datatables tbody').on('click', 'tr', function() {
+                $(this).toggleClass('info');
+            });
+
+            $('#download_select').on('click', function() {
+                var checkboxValues = [];
+
+                // Fetch all the selected rows
+                $('input[name="select"]:checked').map(function() {
+                    checkboxValues.push($(this).val());
+                });
+
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'view_comms' %}",
+                    data: {
+                        'id[]': checkboxValues,
+                        'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val()
+                    }
+                })
+            });
+
+
+        });
+
+    </script>
+    <script type="text/javascript" charset="utf-8" src="{{ STATIC_URL }}js/jquery.dataTables.js"></script>
+
+{% endblock %}

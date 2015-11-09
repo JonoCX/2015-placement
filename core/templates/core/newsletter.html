@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block content %}
+
+    {% for obj in queryset %}
+        <div class="panel colourable">
+            <div class="panel-heading">
+                <span class="panel-title">BH Number: {{ obj.audit.sent.bh_number }}</span>
+            </div>
+            <div class="panel-body">
+                <dd>{{ obj.audit.sent.short_desc }}</dd><br/>
+                <dt>Project Start Date</dt><dd>{{ obj.audit.sent.project_start_date }}</dd><br/>
+                <dt>Value of Award</dt><dd>&pound;{{ obj.audit.sent.value_of_award|intcomma }}</dd><br/>
+                <a href="{% url 'communication_publish' obj.audit.sent.pk %}" role="button" class="btn btn-default">More info</a>
+            </div>
+        </div>
+    {% endfor %}
+
+{% endblock content %}

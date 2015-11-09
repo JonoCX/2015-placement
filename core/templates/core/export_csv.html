@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load render_table from django_tables2 %}
+
+{% block content %}
+
+    <script type="text/css">
+        table.dataTable.select tbody tr,
+        table.dataTable thead th:first-child {
+            cursor: pointer;
+        }
+    </script>
+
+    {% csrf_token %}
+        <div class="table-primary">
+            <div role="grid" id="jq-datatables-wrapper" class="dataTable_wrapper form-inline no-footer">
+                <form method="POST">
+                {% csrf_token %}
+                <table id="jq-datatables" cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered dataTable no-footer table-condensed">
+                    <thead>
+                        <tr>
+                            <th><input name="select_all" value="1" type="checkbox" onclick="toggle(this)"></th>
+                            <th>ID</th>
+                            <th>Short Desc</th>
+                            <th>Full Desc</th>
+                            <th>BH Number</th>
+                            <th>Value</th>
+                            <th>Value to NCL</th>
+                            <th>Start Date</th>
+                            <th>Duration</th>
+                            <th>Individuals</th>
+                            <th>External</th>
+                            <th>Source</th>
+                            <th>Level</th>
+                            <th>Audience</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for obj in objects %}
+                        <tr>
+                            <td><input name="select" value="{{ obj.pk }}" type="checkbox"></td>
+                            <td>{{ obj.sent.pk }}</td>
+                            <td>{{ obj.sent.short_desc }}</td>
+                            <td style="width:30%">{{ obj.sent.full_desc }}</td>
+                            <td>{{ obj.sent.bh_number }}</td>
+                            <td>{{ obj.sent.value_of_award }}</td>
+                            <td>{{ obj.sent.value_awarded_to_ncl }}</td>
+                            <td>{{ obj.sent.project_start_date }}</td>
+                            <td>{{ obj.sent.duration }}</td>
+                            <td>{% for i in obj.sent.individuals.all %}{{ i.name }}{% endfor %}</td>
+                            <td>{{ obj.sent.external }}</td>
+                            <td>{{ obj.sent.source }}</td>
+                            <td>{{ obj.sent.level }}</td>
+                            <td>{{ obj.audience }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <button class="btn btn-primary" type="submit" id="download">Download .csv file</button>
+    </form>
+
+    <script src="{{ STATIC_URL }}/js/export_csv_js.js"></script>
+{% endblock content %}

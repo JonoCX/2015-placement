@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <div class="table-primary">
+        <div role="grid" id="jq-datatables-wrapper" class="dataTable-wrapper form-inline no-footer">
+            {% if is_newsletter %}<form method="POST">{% csrf_token %}{% endif %}
+            <table id="jq-datatables" cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered dataTable no-footer">
+                <thead>
+                    <th>Sent</th>
+                    <th>From Date</th>
+                    <th>To Date</th>
+                    <th>Audience</th>
+                    <th>Sent By</th>
+                </thead>
+                <tbody>
+                    {% for i in data %}
+                    <tr>
+                        <td>{{ i.sent }}</td>
+                        <td>{{ i.from_date }}</td>
+                        <td>{{ i.to_date }}</td>
+                        <td>{{ i.audience }}</td>
+                        <td>{{ i.sent_by }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% if is_newsletter %}<button role="button" class="btn btn-primary" type="submit">View Newsletter</button></form>{% endif %}
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#jq-datatables').DataTable();
+            $('#jq-datatables-wrapper .table-caption').text("Articles");
+        });
+    </script>
+
+{% endblock %}

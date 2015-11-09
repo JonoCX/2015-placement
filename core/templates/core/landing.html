@@ -1,0 +1,183 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{# TODO Accounts stored in the system #}
+{# Main account, full admin privileges; user: 'jonathan' password: '1234' #}
+{# Nonadmin account, generic user; user: 'notadmin' password: '1234' #}
+{# Third account; Dan created his own, not sure on what the password is but the user name is 'dan' #}
+
+{# TODO What doesn't currently work/needs doing/not had enough time to do - #}
+{# 1. When adding tags or notes to an article, they aren't saved properly: see view.communication #}
+{# 2. Tags and Notes aren't viewable on either the article approval page or the edit page, mostly because of 1. #}
+{# 3. Audience needs to be changed to a many-to-many field in the CommsAudit model, will allow for a checkbox; see models.py line 126 #}
+{# 4. Bitly link will need changing, at the moment it is a hard coded path and the access token is linked to my bitly dev account; see views.py line 388 #}
+{# 5. The process of flagging articles, it was mentioned in the first demo of the site. Currently there is a field within the Communication model but it's not fully implemented #}
+{# 6. There is a problem with space being added to the x-editable textareas (but could be replaced by rich text fields, not had time to look into that properly) #}
+{# 7. The help button on the main menu (left hand side) has a help button, doesn't do anything yet. My plan was to implement a simple page with FAQs/definitions on it #}
+{# 8. For continuity it'd probably make sense to rename the 'communication' model to 'article' #}
+{# 9. Work on the non-admin/non-superuser site, what they can see/do etc, probably needs more work. I've focused mainly on what the superuser/admin is able to do/see #}
+{# 10. There may some stuff that i've missed from the list above #}
+{# - Jonathan #}
+
+<script type="text/css">
+    .widget-profile .widget-profile-text {
+        padding: 1px 1px !important;
+}
+</script>
+{% block content %}
+    {% if user.is_authenticated %}
+        <!-- Top of the page buttons -->
+        <div class="page-header">
+            <div class="col-md-4">
+                <a href="{% url 'communication' %}" class="btn btn-labeled btn-block btn-success" role="button">
+                    <span class="btn-label"><i class="fa fa-plus"></i></span>
+                    Create Article entry
+                </a>
+            </div>
+            {% if user.is_superuser %}
+            <div class="col-md-4">
+                <a href="{% url 'unapproved_articles' %}" class="btn btn-labeled btn-block btn-success" role="button">
+                    <span class="btn-label"><i class="fa fa-plus"></i></span>
+                    Approve an Article for external use
+                </a>
+            </div>
+            {% endif %}
+            <div class="col-md-4">
+                <a href="{% url 'view_comms_audit' %}" class="btn btn-labeled btn-block btn-success" role="button">
+                    <span class="btn-label"><i class="fa fa-plus"></i></span>
+                    View Approved Articles
+                </a>
+            </div>
+        </div>
+        <!-- / Top of the page buttons -->
+
+        <!-- Article break down panel -->
+        <div class="col-md-6">
+            <div class="stat-panel" style="height: 145px;">
+                <a href="{% url 'view_comms' %}" class="stat-cell col-xs-5 bg-success bordered no-border-vr no-border-l no-padding valign-middle text-center text-lg">
+                    <strong>Total Articles: {{ total_comm }}</strong>
+                </a>
+                <div class="stat-cell col-xs-7 no-padding valign-middle">
+                    <div class="stat-rows">
+                        <div class="stat-row">
+                            <a href="" class="stat-cell bg-success padding-sm valign-middle">
+                                £{{ ncl_value|intcomma }} awarded to Newcastle University
+                                <i class="fa fa-gbp pull-right"></i>
+                            </a>
+                        </div>
+                        <div class="stat-row">
+                            <a href="{% url 'unapproved_articles' %}" class="stat-cell bg-success darken padding-sm valign-middle">
+                                View all unapproved
+                                <i class="fa fa-arrow-circle-right pull-right"></i>
+                            </a>
+                        </div>
+                        <div class="stat-row">
+                            <a href="{% url 'view_comms' %}" class="stat-cell bg-success darker padding-sm valign-middle">
+                                View all
+                                <i class="fa fa-arrow-circle-right pull-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- / article break down panel -->
+
+        <!-- Article approval stats panel -->
+        <div class="col-md-6">
+            <div class="panel panel-warning panel-dark widget-profile">
+                <div class="panel-heading">
+                    <div class="widget-profile-bg-icon">
+                        <i class="fa fa-files-o"></i>
+                    </div>
+                    <div class="widget-profile-header">
+                        <span>Approved</span><br>
+                    </div>
+                </div>
+                <div class="widget-profile-counters">
+                    <div class="col-md-6">
+                        <span>{{ audited }}</span><br>APPROVED FOR RELEASE
+                    </div>
+                    <div class="col-md-6">
+                        <span>{{ unaudited }}</span><br>UNAPPROVED FOR RELEASE
+                    </div>
+                </div>
+                <button class="form-control input-md widget-profile-input">
+                    <a href="{% url 'export_approved_to_csv' %}">
+                        <span class="pull-left">Export Approved Articles</span>
+                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                    </a>
+                </button>
+            </div>
+        </div>
+        <!-- / Article approval stats panel -->
+
+
+        <div class="col-md-6">
+            <div class="stat-panel">
+                <div class="stat-row">
+                    <div class="stat-cell col-sm-4 bordered padding-sm-hr valign-top">
+                        <h4 class="padding-sm no-padding-t padding-xs-hr">
+                            <i class="fa fa-cloud-upload text-primary"></i>
+                            Article Release Streams
+                        </h4>
+                        <ul class="list-group no-margin">
+                            {# for the key and value in the dictionaries items #}
+                            {% for k, v in d.items %}
+                                {% for i in audience_objs %}
+                                    {# If the audience object name is equal to the dictionaries key, must have items stored #}
+                                    {# against the audience #}
+                                    {% if i.name == k %}
+                                        <li class="list-group-item no-border-hr padding-xs-hr">
+                                            <a href="{% url 'commsaudit' i.pk %}">{{ k }}</a>
+                                            <span class="badge badge-success">{{ v }}</span>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="panel widget-threads">
+                <div class="panel-heading">
+                    <span class="panel-title">
+                        <i class="panel-title-icon fa fa-fire"></i>
+                        Latest Uploaded Communications
+                    </span>
+                </div>
+                <div class="panel-body">
+                    {% for j in comm_objs|slice:":5" %}
+                        <div class="thread">
+                            <img src="{{ STATIC_URL }}theme1/assets/images/pixel-admin/avatar.png" alt class="thread-avatar">
+                            <span class="thread-time">{{ j.created_on }}</span>
+                            <a href="{% url 'communication_publish' j.pk %}" class="thread-title">{{ j.short_desc }}</a>
+                            <div class="thread-info">
+                                uploaded by {{ j.created_by }}, on {{ j.created_on }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <script>
+        init.push(function () {
+            $('.widget-tasks .panel-body').pixelTasks().sortable({
+                axis: "y",
+                handle: ".task-sort-icon",
+                stop: function(event, ui) {
+                    ui.item.children(".task-sort-icon").triggerHandler("focusout");
+                }
+            });
+            $('#clear-completed-tasks').click(function () {
+                $('.widget-tasks .panel-body').pixelTasks('clearCompletedTasks');
+            });
+            $('#dashboard-recent-comments .panel-body > div').slimScroll({ height: 300, alwaysVisible: true, color: '#888',allowPageScroll: true });
+        })
+    </script>
+{% endblock %}

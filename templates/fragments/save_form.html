@@ -1,0 +1,67 @@
+<div id="switchers-colors-default" class="form-group-margin pull-right" style="margin-top:10px;" >
+    <strong style="vertical-align: top;margin-top:5px;" >Auto Save</strong>&nbsp;&nbsp;
+    <input type="checkbox" data-class="switcher-primary" id="save_controls" checked>&nbsp;&nbsp;
+</div>
+
+<div id="save_results">
+    <div class="alert alert-info">Auto Saved Form</div>
+</div>
+
+<script>
+    var contents_changed = false;
+    var output_block = $('#save_results');
+    var form_id = $('.auto_save').attr("id");
+    var msg_start = '<div class="alert alert-success">';
+    var msg_end = '</div>';
+
+    time=setInterval(function(){
+        if(auto_save_on() && contents_changed){
+            save_to_db(form_id);
+        }
+    }, 10000);
+
+    function save_to_db(form_id){
+        $('button[type="submit"]').attr('disabled','disabled');
+        pass_data = $('#'+form_id).serialize();
+        $.ajax({
+            url: '{% url 'save_model_form' app model_name %}',
+            type: 'post',
+            data: pass_data,
+            success: function (data, status) {
+                for (i = 0; i < data.length; i++) {
+                    d = data[i];
+                }
+                output_block.html(msg_start+'Saved on ' + datetimenow() + ' '+msg_end);
+                $('button[type="submit"]').removeAttr('disabled');
+            }
+        });
+    }
+
+    // Look at manual settings
+    function auto_save_on(){
+        if($("#save_controls").is(':checked')){
+            return true
+        }else{
+            return false
+        }
+    }
+
+    function addZero(i) {
+        if (i < 10) {
+            i = "0" + i;
+        }
+        return i;
+    }
+
+    function datetimenow() {
+        var d = new Date();
+        var y = d.getFullYear();
+        var mt = addZero(d.getMonth());
+        var dy = addZero(d.getDate());
+        var h = addZero(d.getHours());
+        var m = addZero(d.getMinutes());
+        var s = addZero(d.getSeconds());
+        return h + ":" + m + ":" + s + " " + dy + "/" + mt + "/" + y;
+    }
+
+</script>

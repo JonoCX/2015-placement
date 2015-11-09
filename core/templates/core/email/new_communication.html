@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>New Communication</title>
+        <!-- ===== CDN as the reciever won't have access to static files (?) ==== -->
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+        <!-- Optional theme -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+    </head>
+    <body>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                New Communication Added
+            </div>
+            <div class="panel-body">
+                <p>
+                    A new communication has been added to the communication system,
+                    it requires an admin to approve it.
+                </p>
+                <p>
+                    Added by: {{ created_by }}<br>
+                    Added on: {{ created_on }}
+                </p>
+                <p>
+                    To approve this, please click the following link
+                </p>
+                <a href="#" class="btn btn-primary" role="button">Approve</a>
+            </div>
+        </div>
+
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    </body>
+</html>
